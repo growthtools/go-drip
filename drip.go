@@ -13,7 +13,8 @@ type Client struct {
 }
 
 type subParams struct {
-	Email string `json:"email"`
+	Email        string                 `json:"email"`
+	CustomFields map[string]interface{} `json:"custom_fields"`
 }
 
 type subRoot struct {
@@ -38,10 +39,10 @@ func NewClient(apiKey, appID string) *Client {
 }
 
 // CreateSubscriber creates a new or updates an existing subscriber by email
-func (c Client) CreateSubscriber(email string) error {
+func (c Client) CreateSubscriber(email string, customFields map[string]interface{}) error {
 	data := subRoot{
 		Subscribers: []subParams{
-			{Email: email},
+			{Email: email, CustomFields: customFields},
 		},
 	}
 	_, _, errs := c.request.Post(baseURL + c.appID + "/subscribers").Send(data).End()
