@@ -1,8 +1,6 @@
 package drip
 
 import (
-	"log"
-
 	"github.com/parnurzeal/gorequest"
 )
 
@@ -46,13 +44,11 @@ func (c Client) CreateSubscriber(email string) error {
 			{Email: email},
 		},
 	}
-	resp, body, errs := c.request.Post(baseURL + c.appID + "/subscribers").Send(data).SetCurlCommand(true).End()
+	_, _, errs := c.request.Post(baseURL + c.appID + "/subscribers").Send(data).End()
 	if errs != nil {
-		log.Printf("Error creating drip sub: %+v", errs)
 		return errs[0]
 	}
 
-	log.Printf("Created Drip sub: %s -- %+v\n%s\n\n", email, resp, body)
 	return nil
 
 }
@@ -64,11 +60,10 @@ func (c Client) RecordEvent(email, eventName string) error {
 			{Email: email, Action: eventName},
 		},
 	}
-	resp, body, errs := c.request.Post(baseURL + c.appID + "/events").Send(data).SetCurlCommand(true).End()
+	_, _, errs := c.request.Post(baseURL + c.appID + "/events").Send(data).End()
 	if errs != nil {
 		return errs[0]
 	}
 
-	log.Printf("Created Drip event: %s: %s -- %+v\n%s\n\n", email, eventName, resp, body)
 	return nil
 }
