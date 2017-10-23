@@ -31,12 +31,12 @@ type eventParams struct {
 }
 
 type tagRoot struct {
-	Tags []tagParams
+	Tags []tagParams `json:"tags"`
 }
 
 type tagParams struct {
-	Email string
-	Tag   string
+	Email string `json:"email"`
+	Tag   string `json:"tag"`
 }
 
 // NewClient returns a client instance ready to act with Drip for the given app and API key
