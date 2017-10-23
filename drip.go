@@ -30,6 +30,15 @@ type eventParams struct {
 	Action string `json:"action"`
 }
 
+type tagRoot struct {
+	Tags []tagParams
+}
+
+type tagParams struct {
+	Email string
+	Tag   string
+}
+
 // NewClient returns a client instance ready to act with Drip for the given app and API key
 func NewClient(apiKey, appID string) *Client {
 	return &Client{
@@ -62,6 +71,22 @@ func (c Client) RecordEvent(email, eventName string) error {
 		},
 	}
 	_, _, errs := c.request.Post(baseURL + c.appID + "/events").Send(data).End()
+	if errs != nil {
+		return errs[0]
+	}
+
+	return nil
+}
+
+// TagSubscriber adds a tag to a subscriber
+func (c Client) TagSubscriber(email, tag string) error {
+	data := tagRoot{
+		Tags: []tagParams{
+			{Email: email, Tag: tag},
+		},
+	}
+
+	_, _, errs := c.request.Post(baseURL + c.appID + "/tags").Send(data).End()
 	if errs != nil {
 		return errs[0]
 	}
