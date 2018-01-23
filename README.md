@@ -7,6 +7,7 @@ Drip API wrapper for golang
 - Track an event
 - Custom fields for subscribers and events
 - Tagging subscribers
+- Custom field [key normalization](#key-normailzation)
 
 Not yet implemented:
 
@@ -21,9 +22,7 @@ _ = dripClient.RecordEvent("an@email-address.com", "Registered")
 _ = dripClient.TagSubscriber("an@email-address.com", "Beta")
 ```
 
-## Features
-
-### Key normailzation
+## Key normailzation
 
 `go-drip` will normalize custom fields keys by removing `$` characters,
 replacing spaces with underscores, and lower casing the entire key. For
