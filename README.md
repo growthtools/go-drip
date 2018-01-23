@@ -34,6 +34,6 @@ example:
 ```
 
 Drip will not add any custom fields even if only one key is malformed. This
-feature tries to guard you against that and helps avoid users (you)
-implementing the same transformations. I'm happy to accept or add additional
-transformations, if you'd benefit from them.
+feature tries to guard you against that and helps avoid re-implementing the
+same transformations. I'm happy to accept or add additional transformations, if
+you'd benefit from them.
