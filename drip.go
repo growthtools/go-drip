@@ -3,6 +3,8 @@ package drip
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"net"
 	"net/http"
 	"strings"
@@ -112,6 +114,18 @@ func (c Client) authenticatedPost(path string, body interface{}) error {
 	req.SetBasicAuth(c.apiKey, "")
 	req.Header.Add("Accept", "application/vnd.api+json")
 	req.Header.Add("Content-Type", "application/json")
-	_, err = c.httpClient.Do(req)
-	return err
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return err
+	}
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return err
+		}
+		return fmt.Errorf("Drip API error: (%d} %s)", resp.StatusCode, string(body))
+	}
+
+	return nil
 }
