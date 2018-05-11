@@ -121,6 +121,7 @@ func (c Client) authenticatedPost(path string, body interface{}) error {
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		body, err := ioutil.ReadAll(resp.Body)
+		defer func() { _ = resp.Body.Close() }()
 		if err != nil {
 			return err
 		}
