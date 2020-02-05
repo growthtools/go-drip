@@ -6,7 +6,7 @@ Drip API wrapper for golang
 - Create a subscriber by email address
 - Track an event
 - Custom fields for subscribers and events
-- Tagging subscribers
+- Tagging/untagging subscribers
 - Custom field [key normalization](#key-normailzation)
 
 Not yet implemented:
