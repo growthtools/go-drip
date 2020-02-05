@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -103,6 +104,31 @@ func (c Client) TagSubscriber(email, tag string) error {
 		},
 	}
 	return c.authenticatedPost("/tags", data)
+}
+
+// UntagSubscriber removes a tag from the subscriber email address
+func (c Client) UntagSubscriber(email, tagName string) error {
+	path := fmt.Sprintf("/subscribers/%s/tags/%s", email, tagName)
+	req, err := c.authenticatedRequest("DELETE", path, nil)
+	if err != nil {
+		err = fmt.Errorf("failed to create request to untag subscriber: %w", err)
+		return err
+	}
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		err = fmt.Errorf("failed to DELETE Drip tag: %w", err)
+		return err
+	}
+
+	if resp.StatusCode != 204 {
+		body, _ := ioutil.ReadAll(resp.Body)
+		_ = resp.Body.Close()
+		err = fmt.Errorf("untag subscriber not successful - %s: %w", string(body), err)
+		return err
+	}
+
+	return nil
 }
 
 func (c Client) authenticatedPost(path string, body interface{}) error {
