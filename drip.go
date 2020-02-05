@@ -110,9 +110,7 @@ func (c Client) authenticatedPost(path string, body interface{}) error {
 	if err != nil {
 		return err
 	}
-	req, err := http.NewRequest("POST", baseURL+c.appID+path, bytes.NewReader(postBody))
-	req.SetBasicAuth(c.apiKey, "")
-	req.Header.Add("Accept", "application/vnd.api+json")
+	req, err := c.authenticatedRequest("POST", path, bytes.NewReader(postBody))
 	req.Header.Add("Content-Type", "application/json")
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
@@ -129,4 +127,12 @@ func (c Client) authenticatedPost(path string, body interface{}) error {
 	}
 
 	return nil
+}
+
+func (c Client) authenticatedRequest(method, path string, body io.Reader) (*http.Request, error) {
+	req, err := http.NewRequest("POST", baseURL+c.appID+path, body)
+	req.SetBasicAuth(c.apiKey, "")
+	req.Header.Add("Accept", "application/vnd.api+json")
+
+	return req, err
 }
