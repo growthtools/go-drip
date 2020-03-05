@@ -156,7 +156,7 @@ func (c Client) authenticatedPost(path string, body interface{}) error {
 }
 
 func (c Client) authenticatedRequest(method, path string, body io.Reader) (*http.Request, error) {
-	req, err := http.NewRequest("POST", baseURL+c.appID+path, body)
+	req, err := http.NewRequest(method, baseURL+c.appID+path, body)
 	req.SetBasicAuth(c.apiKey, "")
 	req.Header.Add("Accept", "application/vnd.api+json")
 
