@@ -21,13 +21,13 @@ type Client struct {
 	httpClient http.Client
 }
 
-type subParams struct {
+type Subscriber struct {
 	Email        string                 `json:"email"`
 	CustomFields map[string]interface{} `json:"custom_fields"`
 }
 
 type subRoot struct {
-	Subscribers []subParams `json:"subscribers"`
+	Subscribers []Subscriber `json:"subscribers"`
 }
 
 type eventRoot struct {
@@ -69,17 +69,9 @@ func NewClient(apiKey, appID string) *Client {
 
 // CreateSubscriber creates a new or updates an existing subscriber by email
 func (c Client) CreateSubscriber(email string, customFields map[string]interface{}) error {
-	dripFields := map[string]interface{}{}
-	for key, value := range customFields {
-		newKey := key
-		newKey = strings.Replace(key, "$", "", -1)
-		newKey = strings.Replace(newKey, " ", "_", -1)
-		newKey = strings.ToLower(newKey)
-		dripFields[newKey] = value
-	}
 	bodyData := subRoot{
-		Subscribers: []subParams{
-			{Email: email, CustomFields: dripFields},
+		Subscribers: []Subscriber{
+			{Email: email, CustomFields: NormalizedFields(customFields)},
 		},
 	}
 
@@ -129,6 +121,22 @@ func (c Client) UntagSubscriber(email, tagName string) error {
 	}
 
 	return nil
+}
+
+func NormalizedFields(customFields map[string]interface{}) map[string]interface{} {
+	dripFields := map[string]interface{}{}
+	for key, value := range customFields {
+		dripFields[NormalizeKey(key)] = value
+	}
+	return dripFields
+}
+
+func NormalizeKey(key string) string {
+	newKey := key
+	newKey = strings.Replace(key, "$", "", -1)
+	newKey = strings.Replace(newKey, " ", "_", -1)
+	newKey = strings.ToLower(newKey)
+	return newKey
 }
 
 func (c Client) authenticatedPost(path string, body interface{}) error {
