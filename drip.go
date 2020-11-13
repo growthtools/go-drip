@@ -9,6 +9,7 @@ import (
 	"net"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -23,7 +24,24 @@ type Client struct {
 
 type Subscriber struct {
 	Email        string                 `json:"email"`
-	CustomFields map[string]interface{} `json:"custom_fields"`
+	CustomFields map[string]interface{} `json:"custom_fields,omitempty"`
+	Tags         []string               `json:"tags,omitempty"`
+
+	customFieldLock sync.Mutex
+}
+
+func NewSubscriber(email string) Subscriber {
+	return Subscriber{
+		Email:        email,
+		CustomFields: map[string]interface{}{},
+	}
+}
+
+func (s *Subscriber) AddCustomField(key, value string) {
+	s.customFieldLock.Lock()
+	defer s.customFieldLock.Unlock()
+
+	s.CustomFields[NormalizeKey(key)] = value
 }
 
 type subRoot struct {
@@ -46,6 +64,10 @@ type tagRoot struct {
 type tagParams struct {
 	Email string `json:"email"`
 	Tag   string `json:"tag"`
+}
+
+type batchReq struct {
+	Batches []subRoot `json:"batches"`
 }
 
 // NewClient returns a client instance ready to act with Drip for the given app and API key
@@ -121,6 +143,10 @@ func (c Client) UntagSubscriber(email, tagName string) error {
 	}
 
 	return nil
+}
+
+func (c Client) BatchUpdateSubscribers(subscribers []Subscriber) error {
+	return c.authenticatedPost("/subscribers/batches", batchReq{Batches: []subRoot{{Subscribers: subscribers}}})
 }
 
 func NormalizedFields(customFields map[string]interface{}) map[string]interface{} {
