@@ -183,7 +183,7 @@ func (c Client) authenticatedPost(path string, body interface{}) error {
 		if err != nil {
 			return err
 		}
-		return fmt.Errorf("Drip API error: (%d} %s)", resp.StatusCode, string(body))
+		return fmt.Errorf("Drip API error: %s (%d): %s", baseURL+c.appID+path, resp.StatusCode, string(body))
 	}
 
 	return nil
