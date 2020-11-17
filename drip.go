@@ -146,7 +146,7 @@ func (c Client) UntagSubscriber(email, tagName string) error {
 }
 
 func (c Client) BatchUpdateSubscribers(subscribers []Subscriber) error {
-	return c.authenticatedPost("/subscribers/batches", batchReq{Batches: []subRoot{{Subscribers: subscribers}}})
+	return c.authenticatedPost("subscribers/batches", batchReq{Batches: []subRoot{{Subscribers: subscribers}}})
 }
 
 func NormalizedFields(customFields map[string]interface{}) map[string]interface{} {
