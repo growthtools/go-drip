@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-const baseURL = "https://api.getdrip.com/v2/"
+const baseURL = "https://api.getdrip.com/v2"
 
 // Client represents a Drip API client wrapper
 type Client struct {
