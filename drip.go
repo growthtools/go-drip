@@ -48,6 +48,15 @@ type subRoot struct {
 	Subscribers []Subscriber `json:"subscribers"`
 }
 
+type newEmailSubscriber struct {
+	Email    string `json:"email"`
+	NewEmail string `json:"new_email"`
+}
+
+type subEmailUpdateRoot struct {
+	Subscribers []newEmailSubscriber `json:"subscribers"`
+}
+
 type eventRoot struct {
 	Events []eventParams `json:"events"`
 }
@@ -94,6 +103,19 @@ func (c Client) CreateSubscriber(email string, customFields map[string]interface
 	bodyData := subRoot{
 		Subscribers: []Subscriber{
 			{Email: email, CustomFields: NormalizedFields(customFields)},
+		},
+	}
+
+	return c.authenticatedPost("/subscribers", bodyData)
+}
+
+// UpdateSubscriberEmail updates an existing subscriber's email address. If an
+// existing subscriber doesn't exist, a new subscriber is created with the
+// newEmail value.
+func (c Client) UpdateSubscriberEmail(email, newEmail string) error {
+	bodyData := subEmailUpdateRoot{
+		Subscribers: []newEmailSubscriber{
+			{Email: email, NewEmail: newEmail},
 		},
 	}
 
